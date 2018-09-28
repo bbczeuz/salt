@@ -133,14 +133,14 @@ def present(name,
 
     if default_organization:
         try:
-            orgid = __salt__['grafana4.get_org'](default_organization, profile)['id']
+            org_id = __salt__['grafana4.get_org'](default_organization, profile)['id']
         except HTTPError as e:
             ret['comment'] = 'Error while looking up user {}\'s default grafana org {}: {}'.format(
                     name, default_organization, e)
             ret['result'] = False
             return ret
     new_data = _get_json_data(login=name, email=email, name=fullname, theme=theme,
-                            orgId = orgid if default_organization else None,
+                            orgId = org_id if default_organization else None,
                             defaults=user_data)
     old_data = _get_json_data(login=None, email=None, name=None, theme=None,
                             orgId=None,
@@ -167,7 +167,7 @@ def present(name,
                     if org_user['role'] != org_role:
                         try:
                             __salt__['grafana4.update_org_user'](user['id'],
-                                    orgname=org_name, profile=profile, role=org_role)
+                                    org_name=org_name, profile=profile, role=org_role)
                         except HTTPError as e:
                             ret['comment'] = 'Error while setting role {} for user {} in grafana org {}: {}'.format(
                                     org_role, name, org_name, e)
@@ -178,7 +178,7 @@ def present(name,
                     break;
             if not user_found:
                 ret['changes'][org_name]=org_role
-                __salt__['grafana4.create_org_user'](orgname=org_name,
+                __salt__['grafana4.create_org_user'](org_name=org_name,
                         profile=profile, role=org_role, loginOrEmail=name)
 
     if new_data != old_data:
@@ -186,7 +186,7 @@ def present(name,
             ret['comment'] = 'User {0} will be updated'.format(name)
             dictupdate.update(ret['changes'], deep_diff(old_data, new_data))
             return ret
-        __salt__['grafana4.update_user'](user['id'], profile=profile, orgid=orgid, **new_data)
+        __salt__['grafana4.update_user'](user['id'], profile=profile, org_id=org_id, **new_data)
         dictupdate.update(
             ret['changes'], deep_diff(
                 user_data, __salt__['grafana4.get_user_data'](user['id'])))

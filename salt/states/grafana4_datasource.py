@@ -69,7 +69,7 @@ def present(name,
             is_default=None,
             with_credentials=None,
             type_logo_url=None,
-            orgname=None,
+            org_name=None,
             profile='grafana'):
     '''
     Ensure that a data source is present.
@@ -118,7 +118,7 @@ def present(name,
     type_logo_url
         Optional - Logo to use for this datasource.
 
-    orgname
+    org_name
         Name of the organization in which the data source should be present.
 
     profile
@@ -129,7 +129,7 @@ def present(name,
         profile = __salt__['config.option'](profile)
 
     ret = {'name': name, 'result': None, 'comment': None, 'changes': {}}
-    datasource = __salt__['grafana4.get_datasource'](name, orgname, profile)
+    datasource = __salt__['grafana4.get_datasource'](name, org_name, profile)
     data = _get_json_data(
         name=name,
         type=type,
@@ -180,14 +180,14 @@ def present(name,
     return ret
 
 
-def absent(name, orgname=None, profile='grafana'):
+def absent(name, org_name=None, profile='grafana'):
     '''
     Ensure that a data source is present.
 
     name
         Name of the data source to remove.
 
-    orgname
+    org_name
         Name of the organization from which the data source should be absent.
 
     profile
@@ -198,7 +198,7 @@ def absent(name, orgname=None, profile='grafana'):
         profile = __salt__['config.option'](profile)
 
     ret = {'name': name, 'result': None, 'comment': None, 'changes': {}}
-    datasource = __salt__['grafana4.get_datasource'](name, orgname, profile)
+    datasource = __salt__['grafana4.get_datasource'](name, org_name, profile)
 
     if not datasource:
         ret['result'] = True

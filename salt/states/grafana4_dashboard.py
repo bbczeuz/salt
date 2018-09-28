@@ -79,7 +79,7 @@ def present(name,
             base_panels_from_pillar=None,
             base_rows_from_pillar=None,
             dashboard=None,
-            orgname=None,
+            org_name=None,
             profile='grafana'):
     '''
     Ensure the grafana dashboard exists and is managed.
@@ -99,7 +99,7 @@ def present(name,
     dashboard
         A dict that defines a dashboard that should be managed.
 
-    orgname
+    org_name
         Name of the organization in which the dashboard should be present.
 
     profile
@@ -137,7 +137,7 @@ def present(name,
     _ensure_annotations(new_dashboard)
 
     # Create dashboard if it does not exist
-    old_dashboard = __salt__['grafana4.get_dashboard'](name, orgname, profile)
+    old_dashboard = __salt__['grafana4.get_dashboard'](name, org_name, profile)
     if not old_dashboard:
         if __opts__['test']:
             ret['result'] = None
@@ -193,7 +193,7 @@ def present(name,
             dashboard=new_dashboard, overwrite=True, profile=profile)
         if response.get('status') == 'success':
             updated_dashboard = __salt__['grafana4.get_dashboard'](
-                name, orgname, profile)
+                name, org_name, profile)
             dashboard_diff = DictDiffer(_cleaned(updated_dashboard),
                                         _cleaned(old_dashboard))
             ret['comment'] = 'Dashboard {0} updated.'.format(name)
@@ -209,14 +209,14 @@ def present(name,
     return ret
 
 
-def absent(name, orgname=None, profile='grafana'):
+def absent(name, org_name=None, profile='grafana'):
     '''
     Ensure the named grafana dashboard is absent.
 
     name
         Name of the grafana dashboard.
 
-    orgname
+    org_name
         Name of the organization in which the dashboard should be present.
 
     profile
@@ -229,7 +229,7 @@ def absent(name, orgname=None, profile='grafana'):
         profile = __salt__['config.option'](profile)
 
     existing_dashboard = __salt__['grafana4.get_dashboard'](
-        name, orgname, profile)
+        name, org_name, profile)
     if existing_dashboard:
         if __opts__['test']:
             ret['result'] = None
